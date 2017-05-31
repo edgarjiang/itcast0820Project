@@ -135,7 +135,6 @@ public class WorkflowAction extends ActionSupport implements ModelDriven<Workflo
 		List<Comment> commentList = null;
 		ValueContext.putValueContext("commentList", commentList);
 		
-		
 		return "taskForm";
 	}
 	
