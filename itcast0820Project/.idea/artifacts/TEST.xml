@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="TEST">
+    <output-path>$PROJECT_DIR$/classes/artifacts/TEST</output-path>
+    <root id="root">
+      <element id="dir-copy" path="$PROJECT_DIR$/WebRoot" />
+    </root>
+  </artifact>
+</component>
