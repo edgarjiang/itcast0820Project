@@ -132,6 +132,9 @@ public class WorkflowAction extends ActionSupport implements ModelDriven<Workflo
 		List<String> outcomeList = workflowService.findOutcomeListByTaskId(taskId);
 		ValueContext.putValueContext("outcomeList", outcomeList);
 		
+		List<Comment> commentList = null;
+		ValueContext.putValueContext("commentList", commentList);
+		
 		
 		return "taskForm";
 	}

@@ -31,7 +31,8 @@
 		  	<td>
 		  		<form action="workflowAction_submitTask.action" method="POST">
 			  		<div align="left" class="STYLE21">
-				 		<input type="hidden" name="taskId"/>
+						<s:hidden name="taskId"></s:hidden>
+						<input type="hidden" name="taskId"/>
 				 		请假天数:<s:textfield name="days" disabled="true" cssStyle="width: 200px;"></s:textfield><br/>
 				 		请假原因:<s:textfield name="content" disabled="true" cssStyle="width: 800px;"></s:textfield><br/>
 				 		请假备注:<s:textarea name="remark" disabled="true" cols="30" rows="2"></s:textarea><br/>
@@ -51,6 +52,7 @@
 	</table>
 	<hr>
 	<br>
+	<s:if test="#commentList!=null && #commentList.size()>0">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 			  <tr>
 			    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -86,8 +88,9 @@
 			    </table></td>
 			  </tr>
 		</table>
-	
-		<%-- <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	</s:if>
+	<s:else>
+		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 			  <tr>
 			    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
 			      <tr>
@@ -104,6 +107,9 @@
 			      </tr>
 			    </table></td>
 			  </tr>
-		</table> --%>
+		</table> 
+	</s:else>
+	
+
 </body>
 </html>
