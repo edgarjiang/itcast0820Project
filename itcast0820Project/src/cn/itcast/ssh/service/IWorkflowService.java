@@ -33,5 +33,7 @@ public interface IWorkflowService {
 
 	List<String> findOutcomeListByTaskId(String taskId);
 
+	void saveSubmitTask(WorkflowBean workflowBean);
+
 
 }

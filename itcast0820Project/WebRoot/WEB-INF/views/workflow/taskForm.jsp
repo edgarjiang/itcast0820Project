@@ -32,7 +32,7 @@
 		  		<form action="workflowAction_submitTask.action" method="POST">
 			  		<div align="left" class="STYLE21">
 						<s:hidden name="taskId"></s:hidden>
-						<input type="hidden" name="taskId"/>
+						<s:hidden name="id"></s:hidden>
 				 		请假天数:<s:textfield name="days" disabled="true" cssStyle="width: 200px;"></s:textfield><br/>
 				 		请假原因:<s:textfield name="content" disabled="true" cssStyle="width: 800px;"></s:textfield><br/>
 				 		请假备注:<s:textarea name="remark" disabled="true" cols="30" rows="2"></s:textarea><br/>

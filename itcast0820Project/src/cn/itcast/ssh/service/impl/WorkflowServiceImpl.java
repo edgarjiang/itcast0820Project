@@ -16,6 +16,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -32,6 +33,7 @@ import cn.itcast.ssh.utils.SessionContext;
 import cn.itcast.ssh.web.form.WorkflowBean;
 
 public class WorkflowServiceImpl implements IWorkflowService {
+
 	/**请假申请Dao*/
 	private ILeaveBillDao leaveBillDao;
 	
@@ -196,4 +198,34 @@ public class WorkflowServiceImpl implements IWorkflowService {
 		return list;
 	}
 	
+	/****/
+	@Override
+	public void saveSubmitTask(WorkflowBean workflowBean) { 
+		String taskId = workflowBean.getTaskId();
+		String outcome = workflowBean.getOutcome();
+		Long id = workflowBean.getId();
+		
+		Task task = taskService.createTaskQuery()
+				.taskId(taskId)
+				.singleResult();
+		String processInstanceId = task.getProcessInstanceId();
+		String message = workflowBean.getComment();
+		Authentication.setAuthenticatedUserId(SessionContext.get().getName());
+		taskService.addComment(taskId, processInstanceId, message);
+		
+		Map<String, Object> variables = new HashMap<String, Object>();
+		if (null != outcome && !outcome.equals("默认提交")) {
+			variables.put("outcome", outcome);
+		}
+		
+		taskService.complete(taskId, variables);
+		
+		ProcessInstance pi = runtimeService.createProcessInstanceQuery()
+				.processInstanceId(processInstanceId)
+				.singleResult();
+		if (null == pi) {
+			LeaveBill bill = leaveBillDao.findLeaveBillById(id);
+			bill.setState(2);
+		}
+	}
 }

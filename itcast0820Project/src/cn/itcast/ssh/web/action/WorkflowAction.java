@@ -143,6 +143,7 @@ public class WorkflowAction extends ActionSupport implements ModelDriven<Workflo
 	 * 提交任务
 	 */
 	public String submitTask(){
+		workflowService.saveSubmitTask(workflowBean);
 		return "listTask";
 	}
 	
