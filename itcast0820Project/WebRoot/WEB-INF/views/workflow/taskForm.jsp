@@ -79,13 +79,14 @@
 			        <td width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">批注人</span></div></td>
 			        <td width="75%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">批注信息</span></div></td>
 			      </tr>
+			      <s:iterator value="#commentList">
 			        <tr>
-				        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center">2014-02-04 21:51:05</div></td>
-				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">范冰冰</div></td>
-				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">检查</div></td>
+				        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><s:date name="time" format="yyyy-MM-dd HH:mm:ss" /></div></td>
+				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><s:property value="userId" /></div></td>
+				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><s:property value="fullMessage" /></div></td>
 				    </tr> 
-			      
-			    </table></td>
+				    </s:iterator>
+					</table></td>
 			  </tr>
 		</table>
 	</s:if>

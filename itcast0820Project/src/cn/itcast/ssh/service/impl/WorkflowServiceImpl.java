@@ -16,6 +16,9 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
@@ -23,6 +26,7 @@ import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
 
@@ -228,4 +232,91 @@ public class WorkflowServiceImpl implements IWorkflowService {
 			bill.setState(2);
 		}
 	}
+
+	/** 获取批注信息,传递的是当前任务的Id，获取历史Id的批注 **/
+	@Override
+	public List<Comment> findCommentByTaskId(String taskId) {
+		List<Comment> list = new ArrayList<Comment>();
+		Task task =  taskService.createTaskQuery()
+				.taskId(taskId)
+				.singleResult();
+		String processInstanceId = task.getProcessInstanceId();
+//		List<HistoricTaskInstance> htiList =  historyService.createHistoricTaskInstanceQuery()
+//				.processInstanceId(processInstanceId)
+//				.orderByTaskDueDate().asc()
+//				.list();
+//		
+//		if (htiList != null && htiList.size()>0) {
+//			for(HistoricTaskInstance hti:htiList) {
+//				String htaskId = hti.getId();
+//				List<Comment> taskList = taskService.getTaskComments(htaskId);
+//				list.addAll(taskList);
+//			}
+//		}
+		list = taskService.getProcessInstanceComments(processInstanceId);
+
+		return list;
+	}
+
+	@Override
+	public List<Comment> findCommentByLeaveBillId(Long id) {
+		
+		LeaveBill leaveBill = leaveBillDao.findLeaveBillById(id);
+		String objectName = leaveBill.getClass().getSimpleName();
+		String objId = objectName + "." + id;
+		
+//		HistoricProcessInstance hpi =  historyService.createHistoricProcessInstanceQuery()
+//				.processInstanceBusinessKey(objId)
+//				.singleResult();
+//		
+//		String processInstanceId = hpi.getId();
+		
+		HistoricVariableInstance hvi = historyService.createHistoricVariableInstanceQuery()
+			.variableValueEquals("objId", objId)
+			.singleResult();
+		String processInstanceId = hvi.getProcessInstanceId();
+		
+		List<Comment> list = taskService.getProcessInstanceComments(processInstanceId);
+				
+		return list;
+	}
+
+	@Override
+	public ProcessDefinition findProcessDefinitionByTaskId(String taskId) {
+		Task task =  taskService.createTaskQuery()
+				.taskId(taskId)
+				.singleResult();		
+		String processDefinitionId = task.getProcessDefinitionId();
+		ProcessDefinition pd = repositoryService.createProcessDefinitionQuery()
+			.processDefinitionId(processDefinitionId)
+			.singleResult();
+		
+		return pd;
+	}
+
+	@Override
+	public Map<String, Object> findCoordingByTaskId(String taskId) {
+		Map<String, Object> map = new HashMap<String,Object>();
+		Task task =  taskService.createTaskQuery()
+				.taskId(taskId)
+				.singleResult();
+		String processDefinitionId = task.getProcessDefinitionId();
+		ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.getProcessDefinition(processDefinitionId);
+		
+		String processInstanceId = task.getProcessInstanceId();
+		ProcessInstance pi = runtimeService.createProcessInstanceQuery()
+			.processInstanceId(processInstanceId).singleResult();
+		
+		String activityId = pi.getActivityId();
+		ActivityImpl activityImpl = processDefinitionEntity.findActivity(activityId);
+		
+		map.put("x", activityImpl.getX());
+		map.put("y", activityImpl.getY());
+		map.put("width", activityImpl.getWidth());
+		map.put("height", activityImpl.getHeight());
+		return map;
+	}
+	
+	
+	
 }

@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
+import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.task.Comment;
@@ -132,7 +134,7 @@ public class WorkflowAction extends ActionSupport implements ModelDriven<Workflo
 		List<String> outcomeList = workflowService.findOutcomeListByTaskId(taskId);
 		ValueContext.putValueContext("outcomeList", outcomeList);
 		
-		List<Comment> commentList = null;
+		List<Comment> commentList = workflowService.findCommentByTaskId(taskId);
 		ValueContext.putValueContext("commentList", commentList);
 		
 		return "taskForm";
@@ -151,11 +153,27 @@ public class WorkflowAction extends ActionSupport implements ModelDriven<Workflo
 	 * 查看当前流程图（查看当前活动节点，并使用红色的框标注）
 	 */
 	public String viewCurrentImage(){
+		String taskId = workflowBean.getTaskId();
+		ProcessDefinition pd = workflowService.findProcessDefinitionByTaskId(taskId);
+		String deploymentId=null;
+		ValueContext.putValueContext("deploymentId", pd.getDeploymentId());
+		ValueContext.putValueContext("imageName", pd.getDiagramResourceName());
+		
+		Map<String, Object> map = workflowService.findCoordingByTaskId(taskId);
+		ValueContext.putValueContext("acs", map);
 		return "image";
 	}
 	
 	// 查看历史的批注信息
 	public String viewHisComment(){
+		Long id = workflowBean.getId();
+		LeaveBill leaveBill = leaveBillService.findLeaveBillById(id);
+		ValueContext.putValueStack(leaveBill);
+		
+		List<Comment> commentList = workflowService.findCommentByLeaveBillId(id);
+		ValueContext.putValueContext("commentList", commentList);
+		
+		
 		return "viewHisComment";
 	}
 }
